@@ -1,7 +1,9 @@
 resetCanvas 600 500
 setColor 0 255 0
-drawLine line1 100 50 500 200 Naive
+drawLine line1 100 50 500 200 DDA
 saveCanvas 1
+resetCanvas 600 500
 setColor 255 0 0
-drawLine 666 200 300 400 150 Naive
-saveCanvas 2
+drawLine line2 100 50 500 200 Naive
+drawLine line3 100 50 500 200 Bresenham
+saveCanvas 3
