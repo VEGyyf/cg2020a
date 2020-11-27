@@ -39,13 +39,13 @@ def draw_line(p_list, algorithm):
             if deltax > deltay:
                 y=y0
                 for x in range(x0, x1 + 1):
-                    y = int(y+k)
-                    result.append((x, y))
+                    y = y+k
+                    result.append((int(x), int(y)))
             else:
                 x = x0
                 for y in range(y0, y1 + 1):
-                    x=int(x+1/k)
-                    result.append((x, y))
+                    x=x+1/k
+                    result.append((int(x), int(y)))
     elif algorithm == 'Bresenham':
 
         if x0 == x1:
