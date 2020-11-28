@@ -1,0 +1,38 @@
+\begin{thebibliography}{1}
+
+\bibitem{DDA}
+两鬓已不能斑白.
+\newblock Dda算法和bresenham算法.
+\newblock [EB/OL].
+\newblock \url{https://blog.csdn.net/u010429424/article/details/77834046}.
+
+\bibitem{Bezier}
+云栖希望。.
+\newblock Bezier曲线.
+\newblock [EB/OL].
+\newblock \url{https://yq.aliyun.com/articles/341091}.
+
+\bibitem{move}
+孙正兴，周良，郑洪源，谢强.
+\newblock {\em 计算机图形学教程}.
+\newblock 机械工业出版社, 2009.
+
+\bibitem{Bresenham}
+学无止境.
+\newblock Bresenham光栅化算法.
+\newblock [EB/OL].
+\newblock \url{https://zhuanlan.zhihu.com/p/74990578}.
+
+\bibitem{B-spline}
+手写的以后.
+\newblock B-样条曲线(b-spline curve)总结.
+\newblock [EB/OL].
+\newblock \url{https://www.jianshu.com/p/49aff913104c}.
+
+\bibitem{Circle}
+未知.
+\newblock 椭圆的中点生成算法.
+\newblock [EB/OL].
+\newblock \url{https://wenku.baidu.com/view/cc7be28dcc17552706220809.html#}.
+
+\end{thebibliography}
