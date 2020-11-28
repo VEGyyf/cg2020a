@@ -172,8 +172,8 @@ def translate(p_list, dx, dy):
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 变换后的图元参数
     """
     for point in p_list:
-        point[0] = point[0]+dx
-        point[1] = point[1]+dy
+        point[0] = int(point[0]+dx)
+        point[1] = int(point[1]+dy)
     return p_list
 
 
@@ -186,10 +186,12 @@ def rotate(p_list, x, y, r):
     :param r: (int) 顺时针旋转角度（°）
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 变换后的图元参数
     """
-    r = 360-r  # 转换为逆时针
+    r = math.radians(360-r)  # 转换为逆时针，角度转换为弧度！
     for point in p_list:
-        point[0] = x + (point[0]-x)*math.cos(r)-(point[1]-y)*math.sin(r)
-        point[1] = y + (point[0]-x)*math.sin(r)+(point[1]-y)*math.cos(r)
+        tmpx = point[0]
+        tmpy = point[1]
+        point[0] = int(x + (tmpx-x)*math.cos(r)-(tmpy-y)*math.sin(r))
+        point[1] = int(y + (tmpx-x)*math.sin(r)+(tmpy-y)*math.cos(r))# point[0]变了！
     return p_list
 
 
@@ -203,8 +205,8 @@ def scale(p_list, x, y, s):
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 变换后的图元参数
     """
     for point in p_list:
-        point[0] = point[0]*s + x*(1-s)
-        point[1] = point[1]*s + y*(1-s)
+        point[0] = int(point[0]*s + x*(1-s))
+        point[1] = int(point[1]*s + y*(1-s))
     return p_list
 
 def encode(x,y,xmin,xmax,ymin,ymax):

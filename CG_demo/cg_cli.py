@@ -52,6 +52,60 @@ if __name__ == '__main__':
                         pixels = alg.draw_curve(p_list, algorithm)
                         for x, y in pixels:
                             canvas[height - 1 - y, x] = color
+                    else:
+                        item_type = item_type.strip().split(' ')
+                        if item_type[0] == 'translate':
+                            pixels=[]
+                            newpixels=[]
+                            dx=int(item_type[1])
+                            dy=int(item_type[2])
+                            if item_type[len(item_type)-1] == 'line':
+                                pixels = alg.draw_line(p_list, algorithm)
+                            elif item_type[len(item_type)-1] == 'polygon':
+                                pixels = alg.draw_polygon(p_list, algorithm)
+                            elif item_type[len(item_type)-1] == 'ellipse':
+                                pixels = alg.draw_ellipse(p_list)
+                            elif item_type[len(item_type)-1] == 'curve':
+                                pixels = alg.draw_curve(p_list, algorithm)
+                            newpixels=alg.translate(pixels, dx, dy)
+                            for x, y in newpixels:
+                                canvas[height - 1 - y, x] = color
+                        elif item_type[0] == 'rotate':
+                            pixels=[]
+                            newpixels=[]
+                            x=int(item_type[1])
+                            y=int(item_type[2])
+                            r=int(item_type[3])
+                            if item_type[len(item_type)-1] == 'line':
+                                pixels = alg.draw_line(p_list, algorithm)
+                            elif item_type[len(item_type)-1] == 'polygon':
+                                pixels = alg.draw_polygon(p_list, algorithm)
+                            elif item_type[len(item_type)-1] == 'ellipse':
+                                pixels = alg.draw_ellipse(p_list)
+                            elif item_type[len(item_type)-1] == 'curve':
+                                pixels = alg.draw_curve(p_list, algorithm)
+                            newpixels=alg.rotate(pixels, x, y,r)
+                            for x, y in newpixels:
+                                canvas[height - 1 - y, x] = color  
+                        elif item_type[0] == 'scale':
+                            pixels=[]
+                            newpixels=[]
+                            x=int(item_type[1])
+                            y=int(item_type[2])
+                            r=float(item_type[3])
+                            if item_type[len(item_type)-1] == 'line':
+                                pixels = alg.draw_line(p_list, algorithm)
+                            elif item_type[len(item_type)-1] == 'polygon':
+                                pixels = alg.draw_polygon(p_list, algorithm)
+                            elif item_type[len(item_type)-1] == 'ellipse':
+                                pixels = alg.draw_ellipse(p_list)
+                            elif item_type[len(item_type)-1] == 'curve':
+                                pixels = alg.draw_curve(p_list, algorithm)
+                            newpixels=alg.scale(pixels, x, y, r)
+                            for x, y in newpixels:
+                                canvas[height - 1 - y, x] = color                                                               
+
+
                 Image.fromarray(canvas).save(os.path.join(output_dir, save_name + '.bmp'), 'bmp')
             elif line[0] == 'setColor':
                 pen_color[0] = int(line[1])
@@ -80,16 +134,34 @@ if __name__ == '__main__':
                 y0 = int(line[3])
                 x1 = int(line[4])
                 y1 = int(line[5])
-                
+                algorithm = 'midpoint'
                 item_dict[item_id] = ['ellipse', [[x0, y0], [x1, y1]], algorithm, np.array(pen_color)]
             elif line[0] == 'drawCurve':
                 pass
-            elif line[0] == 'translate':
-                pass          
+            elif line[0] == 'translate':#直接执行函数画图
+                item_id = line[1]+' translate' 
+                old = item_dict[line[1]]                       
+                dx = line[2]
+                dy = line[3]   
+                transtype='translate '+dx+' '+dy+' '+old[0]
+                item_dict[item_id] = [transtype,  old[1], old[2], old[3]]
+                     
             elif line[0] == 'rotate':
-                pass                
+                item_id = line[1]+' rotate' 
+                old = item_dict[line[1]]                       
+                dx = line[2]
+                dy = line[3]   
+                r = line[4]
+                transtype='rotate '+dx+' '+dy+' '+r+' '+old[0]
+                item_dict[item_id] = [transtype,  old[1], old[2], old[3]]               
             elif line[0] == 'scale':
-                pass  
+                item_id = line[1]+' scale' 
+                old = item_dict[line[1]]                       
+                x = line[2]
+                y = line[3]   
+                s = line[4]
+                transtype='scale '+x+' '+y+' '+s+' '+old[0]
+                item_dict[item_id] = [transtype,  old[1], old[2], old[3]] 
             elif line[0] == 'clip':
                 pass              
 

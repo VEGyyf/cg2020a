@@ -1,13 +1,20 @@
 resetCanvas 600 500
 setColor 0 255 0
 drawLine line1 100 50 500 200 DDA
-saveCanvas 1
+rotate line1 100 50 300
+saveCanvas 5
 resetCanvas 600 500
-drawPolygon rect1 100 50 200 50 200 20 100 20 100 50 Bresenham
 setColor 0 0 255
-
 drawPolygon rect 100 50 200 50 200 20 100 20 100 50 DDA
+setColor 255 0 0 
+rotate rect 0 0 330
+scale rect 0 0 0.5
 saveCanvas 3
 resetCanvas 600 500
 drawEllipse ell 100 50 200 20
+translate ell 150 10
 saveCanvas 4
+resetCanvas 600 500
+setColor 0 0 255
+drawLine line2 0 0 5 0 DDA
+saveCanvas 6
