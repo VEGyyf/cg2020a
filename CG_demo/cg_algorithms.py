@@ -18,18 +18,22 @@ def draw_line(p_list, algorithm):
 # test git
     if algorithm == 'Naive':
         if x0 == x1:
+            if y0 > y1: 
+                y0, y1 = y1,y0
             for y in range(y0, y1 + 1):
-                result.append((x0, y))
+                result.append([x0, y])
         else:
             k = (y1 - y0) / (x1 - x0)
             if x0 > x1: # 统一转换成从左向右生成
                 x0, y0, x1, y1 = x1, y1, x0, y0
             for x in range(x0, x1 + 1):
-                result.append((x, int(y0 + k * (x - x0))))
+                result.append([x, int(y0 + k * (x - x0))])
     elif algorithm == 'DDA':# TODO:debug
         if x0 == x1:  # case:x=k
+            if y0 > y1: 
+                y0, y1 = y1,y0
             for y in range(y0, y1 + 1):
-                result.append((x0, y))
+                result.append([x0, y])
         else:
             k = (y1 - y0) / (x1 - x0)
             if x0 > x1:
@@ -40,17 +44,19 @@ def draw_line(p_list, algorithm):
                 y=y0
                 for x in range(x0, x1 + 1):
                     y = y+k
-                    result.append((int(x), int(y)))
+                    result.append([int(x), int(y)])
             else:
                 x = x0
                 for y in range(y0, y1 + 1):
                     x=x+1/k
-                    result.append((int(x), int(y)))
+                    result.append([int(x), int(y)])
     elif algorithm == 'Bresenham':
 
         if x0 == x1:
+            if y0 > y1: 
+                y0, y1 = y1,y0
             for y in range(y0, y1 + 1):
-                result.append((x0, y))
+                result.append([x0, y])
         else:
             if x0 > x1:
                 x0, y0, x1, y1 = x1, y1, x0, y0
@@ -68,7 +74,7 @@ def draw_line(p_list, algorithm):
                     else:
                         y = y + 1
                         p = p + 2 * deltay - 2 * deltax
-                    result.append((x, y))
+                    result.append([x, y])
             else:
                 p = 2 * deltax - deltay
                 for y in range(y0,y1+1):
@@ -78,7 +84,7 @@ def draw_line(p_list, algorithm):
                     else:
                         x = x + 1
                         p = p + 2 * deltax - 2 * deltay
-                    result.append((x, y))
+                    result.append([x, y])
 
     return result
 
@@ -91,8 +97,8 @@ def draw_polygon(p_list, algorithm):
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 绘制结果的像素点坐标列表
     """
     result = []
-    for i in range(len(p_list)):
-        line = draw_line([p_list[i - 1], p_list[i]], algorithm)
+    for i in range(len(p_list)-1):
+        line = draw_line([p_list[i], p_list[i+1]], algorithm)
         result += line
     return result
 
@@ -107,8 +113,8 @@ def draw_ellipse(p_list):
     x1,y1 = p_list[1]
     xc = (x0+x1)/2
     yc = (y0+y1)/2
-    rx = (x1-x0)/2
-    ry = (y1-y0)/2  # 默认为正
+    rx = abs(x1-x0)/2
+    ry = abs(y1-y0)/2  # 默认为正
     result = []
     x = 0
     y = ry  # 第一个点
@@ -122,7 +128,7 @@ def draw_ellipse(p_list):
             x = x+1
             y = y-1
             p1 = p1+2*ry**2*x-2*rx**2*y+ry**2
-        result.append((x, y))
+        result.append([int(x), int(y)])
     p2 = ry**2*(x+0.5)**2+rx**2*(y-1)**2-rx**2*ry**2
     while x != rx or y != 0:  # section 2
         if p2 > 0:
@@ -133,14 +139,15 @@ def draw_ellipse(p_list):
             x = x+1
             y = y-1
             p2 = p2+2*ry**2*x-2*rx**2*y+rx**2
-        result.append((x, y))
-    for point in result:
-        result.append((point[0], -point[1]))  # 其他三个象限的对称点?
-        result.append((-point[0], -point[1]))
-        result.append((-point[0], point[1]))
+        result.append([int(x), int(y)])
+    tmp =result.copy()
+    for point in tmp: # 死循环
+        result.append([int(point[0]), int(-point[1])])  # 其他三个象限的对称点?
+        result.append([int(-point[0]), int(-point[1])]) # 元组（tuple）是不能修改的,而若想改变里面的元素，则应该用列表（list）。
+        result.append([int(-point[0]), int(point[1])])
     for point in result:  # 平移
-        point[0] = point[0]+xc
-        point[1] = point[1]+yc
+        point[0] = int(point[0]+xc)
+        point[1] = int(point[1]+yc)
     return result
 
 

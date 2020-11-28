@@ -3,12 +3,11 @@ setColor 0 255 0
 drawLine line1 100 50 500 200 DDA
 saveCanvas 1
 resetCanvas 600 500
-setColor 255 0 0
-drawLine line2 100 50 500 200 Naive
-drawLine line3 100 50 500 200 Bresenham
-setColor 0 255 0
-drawLine line4 100 50 500 200 DDA
-drawPolygon rect 100 50 200 50 200 20 100 20 100 50 DDA
-setColor 0 0 255 
 drawPolygon rect1 100 50 200 50 200 20 100 20 100 50 Bresenham
+setColor 0 0 255
+
+drawPolygon rect 100 50 200 50 200 20 100 20 100 50 DDA
 saveCanvas 3
+resetCanvas 600 500
+drawEllipse ell 100 50 200 20
+saveCanvas 4
