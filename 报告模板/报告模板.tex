@@ -31,7 +31,7 @@
 
 十月里我将生成椭圆的中点圆生成算法以及部分图元的编辑算法运用到实践中，并学习了'Cohen-Sutherland'和'Liang-Barsky'线段裁剪算法并尝试运用到实践中。
 
-十一月里我完成了cg_cli.py中大部分指令的实现，并通过编写一些测试用例调试后对之前cg_algorithms.py中的一些bug进行了修复。
+十一月里我完成了cg\_cli.py中大部分指令的实现，并通过编写一些测试用例调试后对之前cg\_algorithms.py中的一些bug进行了修复。
 
 \section{算法介绍}
 \subsection{直线}
@@ -693,14 +693,46 @@ Sutherland 算法都可以扩展为三维裁剪算法。\cite{move}
 \subsection{核心算法模块}
 目前为止，在助教提供的系统框架基础上，运用前文中的算法完成了cg\_algorithms.py中直线,多边形和椭圆的生成，以及平移、旋转、缩放等图元的变换操作。
 \subsection{命令行界面（CLI）程序}
-as follow:
+\subsubsection{数据结构}
+画布可以用一个矩阵表示，创建的图元用item\_dict这一字典结构存储，键为图元id,
+值为一个list，其中存储图元的类型，给定点，实现所用算法和颜色。
+\subsubsection{设计思路}
 \begin{itemize}
-  \item [1)] 
-  A hierarchical control structure is proposed due to the cascade property between translational and rotational system.       
-  \item [2)]
-  Compared with the conventional asymptotic stability controller, the proposed finite - time output feedback controllers can provided faster convergence rates, better disturbance rejection property for trajectory tracking control of the quadrotor UAV in the presence of external disturbances and parametric uncertainties. 
-  \item [3)]
-  Based on finite - time convergent observer, in stead of sensors, such that efficiently decreases the cost and the complexity of the quadrotor UAV system.
+  \item []
+  重置画布
+
+  借助于助教的框架，画布可以用一个矩阵表示，矩阵的每个
+  
+  \item []
+  保存画布
+  
+  \item []
+  设置画笔颜色
+
+  \item []
+  绘制线段
+
+  \item []
+ 绘制多边形
+  
+  \item []
+  绘制椭圆（中点圆生成算法）
+  
+  \item []
+  绘制曲线
+  
+  \item []
+  图元平移
+  
+  \item []
+  图元旋转
+  
+  \item []
+  图元缩放
+
+  \item []
+  对线段裁剪
+  
 \end{itemize}
 \section{总结}
 目前，我学习了一些图形绘制的算法并用python语言实现了一部分。对于图形学的学习，我还刚刚开始，学习了一些经典算法，正在充实自己的理论，尝试着运用到实践之中。
