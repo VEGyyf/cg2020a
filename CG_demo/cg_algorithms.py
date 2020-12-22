@@ -257,8 +257,6 @@ def clip(p_list, x_min, y_min, x_max, y_max, algorithm):
                 
                 break
             else:
-            #elif c1 == 0: #令c2在窗口内
-            #    x0, y0, x1, y1 = x1, y1, x0, y0
                 x,y
                 outcode=c1 if outcode == c1 else c0 #找出区域外的点落在哪一部分
 
