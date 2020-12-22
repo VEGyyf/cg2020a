@@ -152,7 +152,7 @@ def draw_ellipse(p_list):
 
 
 def draw_curve(p_list, algorithm):
-    """绘制曲线
+    """TODO:绘制曲线
 TODO
     :param p_list: (list of list of int: [[x0, y0], [x1, y1], [x2, y2], ...]) 曲线的控制点坐标列表
     :param algorithm: (string) 绘制使用的算法，包括'Bezier'和'B-spline'（三次均匀B样条曲线，曲线不必经过首末控制点）
@@ -230,7 +230,7 @@ def encode(x,y,xmin,xmax,ymin,ymax):
     return res
 
 def clip(p_list, x_min, y_min, x_max, y_max, algorithm):
-    """线段裁剪
+    """TODO:线段裁剪
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1]]) 线段的起点和终点坐标
     :param x_min: 裁剪窗口左上角x坐标
@@ -240,32 +240,55 @@ def clip(p_list, x_min, y_min, x_max, y_max, algorithm):
     :param algorithm: (string) 使用的裁剪算法，包括'Cohen-Sutherland'和'Liang-Barsky'
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1]]) 裁剪后线段的起点和终点坐标
     """
-    x1,y1=p_list[0]
-    x2,y2=p_list[1]
+    x0,y0=p_list[0]
+    x1,y1=p_list[1]
     result = []
+    c1 = encode(x0,y0,x_min,x_max,y_min,y_max)
+    c2 = encode(x1, y1, x_min, x_max, y_min, y_max)
+    #accept=false
     if algorithm == 'Cohen-Sutherland':
         while 1:
-            c1 = encode(x1,y1,x_min,x_max,y_min,y_max)
-            c2 = encode(x2, y2, x_min, x_max, y_min, y_max)
-            if c1 & c2 != 0:
-                return result
-            elif c1 | c2 == 0:
-                return draw_line(p_list, 'DDA')
-            elif c1 == 0:
-                x1, y1, x2, y2 = x2, y2, x1, y1
-            if c1&0b1000:  # 线段与上边界相交
-                x1 = x1+(x2-x1)*(y_max-y1)/(y2-y1)
-                y1 = y_max
-            elif c1&0b0100:  # 线段与下边界相交
-                x1 =x1+(x2-x1)*(y_min-y1)/(y2-y1)
-                y1 = y_min
-            elif c1&0b0010:  # 线段与右边界相交
-                y1 = y1+(y2-y1)*(x_max-x1)/(x2-x1)
-                x1 = x_max
-            elif c1&0b0001:  # 线段与左边界相交
-                y1 =y1+(y2-y1)*(x_min-x1)/(x2-x1)
-                x1 = x_min
-        # TODO
+
+            if c1 & c2 != 0:#完全在窗口外
+                break
+                
+            elif c1 | c2 == 0: # 完全在窗口边界内
+                #accept=true
+                
+                break
+            else:
+            #elif c1 == 0: #令c2在窗口内
+            #    x0, y0, x1, y1 = x1, y1, x0, y0
+                x,y
+                outcode=c1 if outcode == c1 else c0 #找出区域外的点落在哪一部分
+
+                if c1&0b1000:  # 线段与上边界相交
+                    x = x0+(x1-x0)*(y_max-y0)/(y1-y0)
+                    y = y_max
+                elif c1&0b0100:  # 线段与下边界相交
+                    x =x0+(x1-x0)*(y_min-y0)/(y1-y0)
+                    y = y_min
+                elif c1&0b0010:  # 线段与右边界相交
+                    y = y0+(y1-y0)*(x_max-x0)/(x1-x0)
+                    x = x_max
+                elif c1&0b0001:  # 线段与左边界相交
+                    y =y0+(y1-y0)*(x_min-x0)/(x1-x0)
+                    x = x_min
+
+                if outcode==c1:
+                    x0=x
+                    y0=y
+                    c1 = encode(x0,y0,x_min,x_max,y_min,y_max)
+                else:
+                    x1=x
+                    y1=y
+                    c2 = encode(x1, y1, x_min, x_max, y_min, y_max)
+
+        
+        #if accept:
+        result=[[x0, y0], [x1, y1]]
+        draw_line(result, 'DDA')
+
     elif algorithm == 'Liang-Barsky':
         pass
     #return None
