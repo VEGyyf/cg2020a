@@ -42,14 +42,19 @@ def draw_line(p_list, algorithm):
             deltay = abs(y1-y0)
             if deltax > deltay:
                 y=y0
-                for x in range(x0, x1 + 1):
+                for x in range(x0, x1 + 1):#x0<=x1必然
                     y = y+k
                     result.append([int(x), int(y)])
             else:
                 x = x0
-                for y in range(y0, y1 + 1):
-                    x=x+1/k
-                    result.append([int(x), int(y)])
+                if y0>y1:
+                    for y in range(y0, y1 - 1,-1):
+                        x=x+1/k
+                        result.append([int(x), int(y)])
+                else:
+                    for y in range(y0, y1 + 1):
+                        x=x+1/k
+                        result.append([int(x), int(y)])
     elif algorithm == 'Bresenham':
 
         if x0 == x1:
@@ -97,9 +102,12 @@ def draw_polygon(p_list, algorithm):
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 绘制结果的像素点坐标列表
     """
     result = []
-    for i in range(len(p_list)-1):
-        line = draw_line([p_list[i], p_list[i+1]], algorithm)
+    for i in range(len(p_list)):
+        line = draw_line([p_list[i - 1], p_list[i]], algorithm)
         result += line
+
+    line = draw_line([p_list[len(p_list)-1], p_list[0]], algorithm)
+    result += line
     return result
 
 
@@ -232,7 +240,7 @@ def encode(x,y,xmin,xmax,ymin,ymax):
 def cansee(q,d,par_list):
     t0,t1=par_list[0],par_list[1]
     cansee=True
-    r
+    r=0
     if q<0:# 从窗口外到内
         r=d/q
         if r>t1:
@@ -266,51 +274,58 @@ def clip(p_list, x_min, y_min, x_max, y_max, algorithm):
     result = []
 
     if algorithm == 'Cohen-Sutherland':
-        c1 = encode(x0,y0,x_min,x_max,y_min,y_max)
-        c2 = encode(x1, y1, x_min, x_max, y_min, y_max)
+        c0 = encode(x0,y0,x_min,x_max,y_min,y_max)
+        c1 = encode(x1, y1, x_min, x_max, y_min, y_max)
+        outcode=c0
+        if c1 !=0:
+            outcode=c1
         #accept=false
         while 1:
 
-            if c1 & c2 != 0:#完全在窗口外
+            if c0 & c1 != 0:#完全在窗口外
                 break
                 
-            elif c1 | c2 == 0: # 完全在窗口边界内
+            elif c0 | c1 == 0: # 完全在窗口边界内
                 #accept=true
                 
                 break
             else:
-                x,y
-                outcode=c1 if outcode == c1 else c0 #找出区域外的点落在哪一部分
+                x=0
+                y=0
+                outcode=c0 if outcode == c0 else c1 #找出区域外的点落在哪一部分
 
-                if c1&0b1000:  # 线段与上边界相交
+                if  outcode&0b1000:  # 线段与上边界相交
                     x = x0+(x1-x0)*(y_max-y0)/(y1-y0)
                     y = y_max
-                elif c1&0b0100:  # 线段与下边界相交
+                elif  outcode&0b0100:  # 线段与下边界相交
                     x =x0+(x1-x0)*(y_min-y0)/(y1-y0)
                     y = y_min
-                elif c1&0b0010:  # 线段与右边界相交
+                elif  outcode&0b0010:  # 线段与右边界相交
                     y = y0+(y1-y0)*(x_max-x0)/(x1-x0)
                     x = x_max
-                elif c1&0b0001:  # 线段与左边界相交
+                elif  outcode&0b0001:  # 线段与左边界相交
                     y =y0+(y1-y0)*(x_min-x0)/(x1-x0)
                     x = x_min
 
-                if outcode==c1:
+                if outcode==c0:
                     x0=x
                     y0=y
-                    c1 = encode(x0,y0,x_min,x_max,y_min,y_max)
+                    c0 = encode(x0,y0,x_min,x_max,y_min,y_max)
                 else:
                     x1=x
                     y1=y
-                    c2 = encode(x1, y1, x_min, x_max, y_min, y_max)
+                    c1 = encode(x1, y1, x_min, x_max, y_min, y_max)
 
         
         #if accept:
         result=[[x0, y0], [x1, y1]]
-        draw_line(result, 'DDA')
+        # return draw_line(result, 'DDA')
 
     elif algorithm == 'Liang-Barsky':
-        t0=0.0,t1=1.0,deltax=x1-x0,deltay=y1-y0
+        t0=0.0
+        t1=1.0
+        deltax=x1-x0
+        deltay=y1-y0
         if cansee(-deltax,x0-x_min,[t0,t1])==False:
             return
         if cansee(deltax,x_max-x0,[t0,t1])==False:
@@ -323,6 +338,8 @@ def clip(p_list, x_min, y_min, x_max, y_max, algorithm):
         y1=y0+t1*deltay
         x0=x0+t0*deltax
         y0=y0+t0*deltay  
-        draw_line(result, 'DDA')
+        result=[[x0, y0], [x1, y1]]
+        
+    return draw_line(result, 'DDA')
 
     #return None

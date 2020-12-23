@@ -39,19 +39,19 @@ if __name__ == '__main__':
                     if item_type == 'line':
                         pixels = alg.draw_line(p_list, algorithm)
                         for x, y in pixels:
-                            canvas[height - 1 - y, x] = color
+                            canvas[y, x] = color
                     elif item_type == 'polygon':
                         pixels = alg.draw_polygon(p_list, algorithm)
                         for x, y in pixels:
-                            canvas[height - 1 - y, x] = color
+                            canvas[y, x] = color
                     elif item_type == 'ellipse':
                         pixels = alg.draw_ellipse(p_list)
                         for x, y in pixels:
-                            canvas[height - 1 - y, x] = color
+                            canvas[y, x] = color
                     elif item_type == 'curve':
                         pixels = alg.draw_curve(p_list, algorithm)
                         for x, y in pixels:
-                            canvas[height - 1 - y, x] = color
+                            canvas[y, x] = color
                     else:
                         item_type = item_type.strip().split(' ')
                         if item_type[0] == 'translate':
@@ -69,7 +69,7 @@ if __name__ == '__main__':
                                 pixels = alg.draw_curve(p_list, algorithm)
                             newpixels=alg.translate(pixels, dx, dy)
                             for x, y in newpixels:
-                                canvas[height - 1 - y, x] = color
+                                canvas[y, x] = color
                         elif item_type[0] == 'rotate':
                             pixels=[]
                             newpixels=[]
@@ -86,7 +86,7 @@ if __name__ == '__main__':
                                 pixels = alg.draw_curve(p_list, algorithm)
                             newpixels=alg.rotate(pixels, x, y,r)
                             for x, y in newpixels:
-                                canvas[height - 1 - y, x] = color  
+                                canvas[y, x] = color  
                         elif item_type[0] == 'scale':
                             pixels=[]
                             newpixels=[]
@@ -103,7 +103,7 @@ if __name__ == '__main__':
                                 pixels = alg.draw_curve(p_list, algorithm)
                             newpixels=alg.scale(pixels, x, y, r)
                             for x, y in newpixels:
-                                canvas[height - 1 - y, x] = color                                                               
+                                canvas[y, x] = color                                                               
                         elif item_type[0] == 'clip':
                             pixels=[]
                             newpixels=[]
@@ -115,7 +115,7 @@ if __name__ == '__main__':
                             #pixels = alg.draw_line(p_list, algorithm)
                             newpixels=alg.clip(p_list, xm, ym, xM, yM, clipalg)
                             for x, y in newpixels:
-                                canvas[height - 1 - y, x] = color                                                               
+                                canvas[y, x] = color                                                               
 
 
                 Image.fromarray(canvas).save(os.path.join(output_dir, save_name + '.bmp'), 'bmp')
