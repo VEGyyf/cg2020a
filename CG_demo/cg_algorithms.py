@@ -211,42 +211,64 @@ def scale(p_list, x, y, s):
 
 def encode(x,y,xmin,xmax,ymin,ymax):
     res = 0b0
-    if x < xmin:
-        res = res | 0b1000
+    if x < xmin:#左
+        res = res | 0b0001
     else:
         res = res | 0b0000
-    if x > xmax:
-        res =res | 0b0100
+    if x > xmax:#右
+        res =res | 0b0010
     else:
         res = res | 0b0000
-    if y < ymin:
-        res = res | 0b0010
+    if y > ymax:#下
+        res = res | 0b0100
     else:
         res = res | 0b0000
-    if y > ymax:
-        res =res | 0b0001
+    if y <ymin:#上
+        res =res | 0b1000
     else:
         res = res | 0b0000
     return res
+
+def cansee(q,d,par_list):
+    t0,t1=par_list[0],par_list[1]
+    cansee=True
+    r
+    if q<0:# 从窗口外到内
+        r=d/q
+        if r>t1:
+            cansee=False
+        elif r>t0:
+            t0=r
+    elif q>0:# 从窗口内到外
+        r=d/q
+        if r<t0:
+            cansee=False
+        elif r<t1:
+            t1=r
+    elif d<0 and q == 0:
+        cansee=False
+    par_list[0],par_list[1]=t0,t1
+    return cansee
 
 def clip(p_list, x_min, y_min, x_max, y_max, algorithm):
     """TODO:线段裁剪
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1]]) 线段的起点和终点坐标
     :param x_min: 裁剪窗口左上角x坐标
-    :param y_min: 裁剪窗口左上角y坐标
+    :param y_min: 裁剪窗口左上角y坐标!
     :param x_max: 裁剪窗口右下角x坐标
-    :param y_max: 裁剪窗口右下角y坐标
+    :param y_max: 裁剪窗口右下角y坐标!
     :param algorithm: (string) 使用的裁剪算法，包括'Cohen-Sutherland'和'Liang-Barsky'
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1]]) 裁剪后线段的起点和终点坐标
     """
     x0,y0=p_list[0]
     x1,y1=p_list[1]
     result = []
-    c1 = encode(x0,y0,x_min,x_max,y_min,y_max)
-    c2 = encode(x1, y1, x_min, x_max, y_min, y_max)
-    #accept=false
+
     if algorithm == 'Cohen-Sutherland':
+        c1 = encode(x0,y0,x_min,x_max,y_min,y_max)
+        c2 = encode(x1, y1, x_min, x_max, y_min, y_max)
+        #accept=false
         while 1:
 
             if c1 & c2 != 0:#完全在窗口外
@@ -288,5 +310,19 @@ def clip(p_list, x_min, y_min, x_max, y_max, algorithm):
         draw_line(result, 'DDA')
 
     elif algorithm == 'Liang-Barsky':
-        pass
+        t0=0.0,t1=1.0,deltax=x1-x0,deltay=y1-y0
+        if cansee(-deltax,x0-x_min,[t0,t1])==False:
+            return
+        if cansee(deltax,x_max-x0,[t0,t1])==False:
+            return 
+        if cansee(-deltay,y0-y_max,[t0,t1])==False:
+            return                  
+        if cansee(deltay,y_min-y0,[t0,t1])==False:
+            return
+        x1=x0+t1*deltax
+        y1=y0+t1*deltay
+        x0=x0+t0*deltax
+        y0=y0+t0*deltay  
+        draw_line(result, 'DDA')
+
     #return None
