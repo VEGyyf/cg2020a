@@ -104,6 +104,18 @@ if __name__ == '__main__':
                             newpixels=alg.scale(pixels, x, y, r)
                             for x, y in newpixels:
                                 canvas[height - 1 - y, x] = color                                                               
+                        elif item_type[0] == 'clip':
+                            pixels=[]
+                            newpixels=[]
+                            xm=int(item_type[1])
+                            ym=int(item_type[2])
+                            xM=int(item_type[3])
+                            yM=int(item_type[4])                            
+                            clipalg=item_type[5]
+                            #pixels = alg.draw_line(p_list, algorithm)
+                            newpixels=alg.clip(p_list, xm, ym, xM, yM, clipalg)
+                            for x, y in newpixels:
+                                canvas[height - 1 - y, x] = color                                                               
 
 
                 Image.fromarray(canvas).save(os.path.join(output_dir, save_name + '.bmp'), 'bmp')
@@ -138,7 +150,7 @@ if __name__ == '__main__':
                 item_dict[item_id] = ['ellipse', [[x0, y0], [x1, y1]], algorithm, np.array(pen_color)]
             elif line[0] == 'drawCurve':
                 pass
-            elif line[0] == 'translate':#直接执行函数画图
+            elif line[0] == 'translate':
                 item_id = line[1]+' translate' 
                 old = item_dict[line[1]]                       
                 dx = line[2]
@@ -163,7 +175,16 @@ if __name__ == '__main__':
                 transtype='scale '+x+' '+y+' '+s+' '+old[0]
                 item_dict[item_id] = [transtype,  old[1], old[2], old[3]] 
             elif line[0] == 'clip':
-                pass              
+                item_id = line[1]+' clip' 
+                old = item_dict[line[1]]                       
+                xm = line[2]
+                ym = line[3]   
+                xM = line[4]
+                yM = line[5]  
+                clipalg=line[6]
+                transtype='clip '+xm+' '+ym+' '+xM+' '+yM+' '+clipalg+' '+old[0]#old[6]为原来线段的生成算法
+                item_dict[item_id] = [transtype,  old[1], old[2], old[3]]
+               
 
             line = fp.readline()
 
