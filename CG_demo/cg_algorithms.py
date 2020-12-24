@@ -125,6 +125,7 @@ def draw_ellipse(p_list):
     result = []
     x = 0
     y = ry  # 第一个点
+    result.append([int(x), int(y)])
     p1 = ry**2-rx**2*ry+rx**2/4
     while 2*ry**2*x < 2*rx**2*y:  # section 1
         if p1 < 0:
@@ -137,7 +138,7 @@ def draw_ellipse(p_list):
             p1 = p1+2*ry**2*x-2*rx**2*y+ry**2
         result.append([int(x), int(y)])
     p2 = ry**2*(x+0.5)**2+rx**2*(y-1)**2-rx**2*ry**2
-    while x != rx or y != 0:  # section 2
+    while x < int(rx+2) and y > 0:  # section 2
         if p2 > 0:
             x = x
             y = y-1
