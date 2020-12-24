@@ -88,7 +88,7 @@ if __name__ == '__main__':
                             xM=int(item_type[3])
                             yM=int(item_type[4])                            
                             clipalg=item_type[5]
-                            newpixels=alg.clip(p_list, xm, ym, xM, yM, clipalg)
+                            newpixels=alg.clip(p_list, xm, ym, xM, yM, clipalg,algorithm)
                             for x, y in newpixels:
                                 canvas[y, x] = color                                                               
 

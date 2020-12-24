@@ -289,7 +289,7 @@ def cansee(q,d,par_list):
     par_list[0],par_list[1]=t0,t1
     return cansee
 
-def clip(p_list, x_min, y_min, x_max, y_max, algorithm):
+def clip(p_list, x_min, y_min, x_max, y_max, algorithm,alg):
     """TODO:线段裁剪
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1]]) 线段的起点和终点坐标
@@ -303,13 +303,13 @@ def clip(p_list, x_min, y_min, x_max, y_max, algorithm):
     x0,y0=p_list[0]
     x1,y1=p_list[1]
     result = []
-
+    x=0
+    y=0
     if algorithm == 'Cohen-Sutherland':
         c0 = encode(x0,y0,x_min,x_max,y_min,y_max)
         c1 = encode(x1, y1, x_min, x_max, y_min, y_max)
-        outcode=c0
-        if c1 !=0:
-            outcode=c1
+
+
         #accept=false
         while 1:
 
@@ -321,9 +321,8 @@ def clip(p_list, x_min, y_min, x_max, y_max, algorithm):
                 
                 break
             else:
-                x=0
-                y=0
-                outcode=c0 if outcode == c0 else c1 #找出区域外的点落在哪一部分
+                outcode=c0 if c0!=0 else c1
+                #找出区域外的点落在哪一部分
 
                 if  outcode&0b1000:  # 线段与上边界相交
                     x = x0+(x1-x0)*(y_max-y0)/(y1-y0)
@@ -349,7 +348,7 @@ def clip(p_list, x_min, y_min, x_max, y_max, algorithm):
 
         
         #if accept:
-        result=[[x0, y0], [x1, y1]]
+        result=[[int(x0), int(y0)], [int(x1), int(y1)]]
         # return draw_line(result, 'DDA')
 
     elif algorithm == 'Liang-Barsky':
@@ -369,8 +368,8 @@ def clip(p_list, x_min, y_min, x_max, y_max, algorithm):
         y1=y0+t1*deltay
         x0=x0+t0*deltax
         y0=y0+t0*deltay  
-        result=[[x0, y0], [x1, y1]]
+        result=[[int(x0), int(y0)], [int(x1), int(y1)]]
         
-    return draw_line(result, 'DDA')
+    return draw_line(result, alg)
 
     #return None
