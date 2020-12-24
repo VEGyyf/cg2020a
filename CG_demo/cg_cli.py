@@ -59,49 +59,25 @@ if __name__ == '__main__':
                             newpixels=[]
                             dx=int(item_type[1])
                             dy=int(item_type[2])
-                            if item_type[len(item_type)-1] == 'line':
-                                pixels = alg.draw_line(p_list, algorithm)
-                            elif item_type[len(item_type)-1] == 'polygon':
-                                pixels = alg.draw_polygon(p_list, algorithm)
-                            elif item_type[len(item_type)-1] == 'ellipse':
-                                pixels = alg.draw_ellipse(p_list)
-                            elif item_type[len(item_type)-1] == 'curve':
-                                pixels = alg.draw_curve(p_list, algorithm)
-                            newpixels=alg.translate(pixels, dx, dy)
+                            newpixels=alg.translate(p_list, dx, dy,algorithm,item_type[len(item_type)-1])
                             for x, y in newpixels:
-                                canvas[y, x] = color
+                                canvas[y, x] = color 
                         elif item_type[0] == 'rotate':
                             pixels=[]
                             newpixels=[]
                             x=int(item_type[1])
                             y=int(item_type[2])
                             r=int(item_type[3])
-                            if item_type[len(item_type)-1] == 'line':
-                                pixels = alg.draw_line(p_list, algorithm)
-                            elif item_type[len(item_type)-1] == 'polygon':
-                                pixels = alg.draw_polygon(p_list, algorithm)
-                            elif item_type[len(item_type)-1] == 'ellipse':
-                                pixels = alg.draw_ellipse(p_list)
-                            elif item_type[len(item_type)-1] == 'curve':
-                                pixels = alg.draw_curve(p_list, algorithm)
-                            newpixels=alg.rotate(pixels, x, y,r)
+                            newpixels=alg.rotate(p_list, x, y, r,algorithm,item_type[len(item_type)-1])
                             for x, y in newpixels:
                                 canvas[y, x] = color  
                         elif item_type[0] == 'scale':
-                            pixels=[]
+                            parl=[]
                             newpixels=[]
                             x=int(item_type[1])
                             y=int(item_type[2])
                             r=float(item_type[3])
-                            if item_type[len(item_type)-1] == 'line':
-                                pixels = alg.draw_line(p_list, algorithm)
-                            elif item_type[len(item_type)-1] == 'polygon':
-                                pixels = alg.draw_polygon(p_list, algorithm)
-                            elif item_type[len(item_type)-1] == 'ellipse':
-                                pixels = alg.draw_ellipse(p_list)
-                            elif item_type[len(item_type)-1] == 'curve':
-                                pixels = alg.draw_curve(p_list, algorithm)
-                            newpixels=alg.scale(pixels, x, y, r)
+                            newpixels=alg.scale(p_list, x, y, r,algorithm,item_type[len(item_type)-1])
                             for x, y in newpixels:
                                 canvas[y, x] = color                                                               
                         elif item_type[0] == 'clip':
@@ -112,7 +88,6 @@ if __name__ == '__main__':
                             xM=int(item_type[3])
                             yM=int(item_type[4])                            
                             clipalg=item_type[5]
-                            #pixels = alg.draw_line(p_list, algorithm)
                             newpixels=alg.clip(p_list, xm, ym, xM, yM, clipalg)
                             for x, y in newpixels:
                                 canvas[y, x] = color                                                               
@@ -157,6 +132,7 @@ if __name__ == '__main__':
                 dy = line[3]   
                 transtype='translate '+dx+' '+dy+' '+old[0]
                 item_dict[item_id] = [transtype,  old[1], old[2], old[3]]
+                del item_dict[line[1]]
                      
             elif line[0] == 'rotate':
                 item_id = line[1]+' rotate' 
@@ -165,7 +141,8 @@ if __name__ == '__main__':
                 dy = line[3]   
                 r = line[4]
                 transtype='rotate '+dx+' '+dy+' '+r+' '+old[0]
-                item_dict[item_id] = [transtype,  old[1], old[2], old[3]]               
+                item_dict[item_id] = [transtype,  old[1], old[2], old[3]] 
+                del item_dict[line[1]]              
             elif line[0] == 'scale':
                 item_id = line[1]+' scale' 
                 old = item_dict[line[1]]                       
@@ -174,6 +151,7 @@ if __name__ == '__main__':
                 s = line[4]
                 transtype='scale '+x+' '+y+' '+s+' '+old[0]
                 item_dict[item_id] = [transtype,  old[1], old[2], old[3]] 
+                del item_dict[line[1]]
             elif line[0] == 'clip':
                 item_id = line[1]+' clip' 
                 old = item_dict[line[1]]                       
@@ -182,8 +160,9 @@ if __name__ == '__main__':
                 xM = line[4]
                 yM = line[5]  
                 clipalg=line[6]
-                transtype='clip '+xm+' '+ym+' '+xM+' '+yM+' '+clipalg+' '+old[0]#old[6]为原来线段的生成算法
+                transtype='clip '+xm+' '+ym+' '+xM+' '+yM+' '+clipalg+' '+old[0]
                 item_dict[item_id] = [transtype,  old[1], old[2], old[3]]
+                del item_dict[line[1]]
                
 
             line = fp.readline()

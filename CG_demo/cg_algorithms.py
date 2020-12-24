@@ -14,7 +14,7 @@ def draw_line(p_list, algorithm):
     """
     x0, y0 = p_list[0]
     x1, y1 = p_list[1]
-    result = []
+    result = [[x0, y0], [x1, y1]]
 # test git
     if algorithm == 'Naive':
         if x0 == x1:
@@ -35,62 +35,64 @@ def draw_line(p_list, algorithm):
             for y in range(y0, y1 + 1):
                 result.append([x0, y])
         else:
+            
+
             k = (y1 - y0) / (x1 - x0)
-            if x0 > x1:
-                x0, y0, x1, y1 = x1, y1, x0, y0
             deltax = abs(x1-x0)
             deltay = abs(y1-y0)
+            
             if deltax > deltay:
+                if x0 > x1:
+                    x0, y0, x1, y1 = x1, y1, x0, y0
                 y=y0
                 for x in range(x0, x1 + 1):#x0<=x1必然
                     y = y+k
                     result.append([int(x), int(y)])
             else:
+                if y0 > y1:
+                    x0, y0, x1, y1 = x1, y1, x0, y0
                 x = x0
-                if y0>y1:
-                    for y in range(y0, y1 - 1,-1):
-                        x=x+1/k
-                        result.append([int(x), int(y)])
-                else:
-                    for y in range(y0, y1 + 1):
-                        x=x+1/k
-                        result.append([int(x), int(y)])
-    elif algorithm == 'Bresenham':
+                for y in range(y0, y1 + 1):
+                    x=x+1/k
+                    result.append([int(x), int(y)])
 
+    elif algorithm == 'Bresenham':
+        '''
         if x0 == x1:
             if y0 > y1: 
                 y0, y1 = y1,y0
             for y in range(y0, y1 + 1):
                 result.append([x0, y])
+        if y0 == y1:
+            if x0 > x1: 
+                x0,x1 = x1,x0
+            for x in range(x0, x1 + 1):
+                result.append([x, y0])
+        '''
+        dx=abs(x1-x0)
+        sx=-1 if x0>x1 else 1
+        dy=abs(y1-y0)
+        sy=-1 if y0>y1 else 1
+        x,y=x0,y0
+        if dx>dy:
+            err = dx/2.0
+            while x!=x1:
+                result.append([x,y])
+                err-=dy
+                if err < 0:
+                    y+=sy
+                    err +=dx
+                x+=sx
         else:
-            if x0 > x1:
-                x0, y0, x1, y1 = x1, y1, x0, y0
-            deltax = x1-x0
-            deltay = y1-y0
-            k = deltay/deltax
-            x = x0
-            y = y0
-            if abs(k) < 1:
-                p = 2 * deltay - deltax
-                for x in range(x0, x1+1):
-                    if p < 0:
-                        y = y
-                        p = p +2 *deltay
-                    else:
-                        y = y + 1
-                        p = p + 2 * deltay - 2 * deltax
-                    result.append([x, y])
-            else:
-                p = 2 * deltax - deltay
-                for y in range(y0,y1+1):
-                    if p < 0:
-                        x = x
-                        p = p + 2 * deltax
-                    else:
-                        x = x + 1
-                        p = p + 2 * deltax - 2 * deltay
-                    result.append([x, y])
-
+            err = dy/2.0
+            while y!=y1:
+                result.append([x,y])
+                err-=dx
+                if err < 0:
+                    x+=sx
+                    err +=dy
+                y+=sy
+       
     return result
 
 
@@ -105,9 +107,6 @@ def draw_polygon(p_list, algorithm):
     for i in range(len(p_list)):
         line = draw_line([p_list[i - 1], p_list[i]], algorithm)
         result += line
-
-    line = draw_line([p_list[len(p_list)-1], p_list[0]], algorithm)
-    result += line
     return result
 
 
@@ -172,20 +171,30 @@ TODO
         pass
 
 
-def translate(p_list, dx, dy):
+def translate(p_list, dx, dy,alg,itemtype):
     """平移变换
     :param p_list: (list of list of int: [[x0, y0], [x1, y1], [x2, y2], ...]) 图元参数
     :param dx: (int) 水平方向平移量
     :param dy: (int) 垂直方向平移量
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 变换后的图元参数
     """
+    res=[]
     for point in p_list:
         point[0] = int(point[0]+dx)
         point[1] = int(point[1]+dy)
-    return p_list
+    if itemtype=='line':
+        res=draw_line(p_list, alg)
+    elif itemtype=='polygon':
+        res=draw_polygon(p_list, alg)
+    elif itemtype=='ellipse':
+        res=draw_ellipse(p_list)
+    elif itemtype=='curve':
+        res=draw_curve(p_list, alg)                
+
+    return res
 
 
-def rotate(p_list, x, y, r):
+def rotate(p_list, x, y, r,alg,itemtype):
     """旋转变换（除椭圆外）
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1], [x2, y2], ...]) 图元参数
@@ -194,16 +203,27 @@ def rotate(p_list, x, y, r):
     :param r: (int) 顺时针旋转角度（°）
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 变换后的图元参数
     """
-    r = math.radians(360-r)  # 转换为逆时针，角度转换为弧度！
+    res=[]
+    if itemtype=='ellipse':
+        res=draw_ellipse(p_list)
+    r = math.radians(r)  # 角度转换为弧度！
     for point in p_list:
         tmpx = point[0]
         tmpy = point[1]
         point[0] = int(x + (tmpx-x)*math.cos(r)-(tmpy-y)*math.sin(r))
         point[1] = int(y + (tmpx-x)*math.sin(r)+(tmpy-y)*math.cos(r))# point[0]变了！
-    return p_list
+    if itemtype=='line':
+        res=draw_line(p_list, alg)
+    elif itemtype=='polygon':
+        res=draw_polygon(p_list, alg)
+
+    elif itemtype=='curve':
+        res=draw_curve(p_list, alg)                
+
+    return res
 
 
-def scale(p_list, x, y, s):
+def scale(p_list, x, y, s,alg,itemtype):
     """缩放变换
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1], [x2, y2], ...]) 图元参数
@@ -212,10 +232,20 @@ def scale(p_list, x, y, s):
     :param s: (float) 缩放倍数
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 变换后的图元参数
     """
-    for point in p_list:
+    res=[]
+    for point in p_list:# 对控制点进行缩放
         point[0] = int(point[0]*s + x*(1-s))
         point[1] = int(point[1]*s + y*(1-s))
-    return p_list
+    if itemtype=='line':
+        res=draw_line(p_list, alg)
+    elif itemtype=='polygon':
+        res=draw_polygon(p_list, alg)
+    elif itemtype=='ellipse':
+        res=draw_ellipse(p_list)
+    elif itemtype=='curve':
+        res=draw_curve(p_list, alg)                
+
+    return res # 放大后填充空隙
 
 def encode(x,y,xmin,xmax,ymin,ymax):
     res = 0b0
