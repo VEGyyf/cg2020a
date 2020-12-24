@@ -271,7 +271,7 @@ def encode(x,y,xmin,xmax,ymin,ymax):
 def cansee(q,d,par_list):
     t0,t1=par_list[0],par_list[1]
     cansee=True
-    r=0
+    r=0.0
     if q<0:# 从窗口外到内
         r=d/q
         if r>t1:
@@ -284,10 +284,10 @@ def cansee(q,d,par_list):
             cansee=False
         elif r<t1:
             t1=r
-    elif d<0 and q == 0:
+    elif d<0 :
         cansee=False
     par_list[0],par_list[1]=t0,t1
-    return cansee
+    return [cansee,t0,t1]
 
 def clip(p_list, x_min, y_min, x_max, y_max, algorithm,alg):
     """TODO:线段裁剪
@@ -356,13 +356,17 @@ def clip(p_list, x_min, y_min, x_max, y_max, algorithm,alg):
         t1=1.0
         deltax=x1-x0
         deltay=y1-y0
-        if cansee(-deltax,x0-x_min,[t0,t1])==False:
+        flag,t0,t1=cansee(-deltax,x0-x_min,[t0,t1])
+        if flag==False:
             return
-        if cansee(deltax,x_max-x0,[t0,t1])==False:
+        flag,t0,t1=cansee(deltax,x_max-x0,[t0,t1])
+        if flag==False:
             return 
-        if cansee(-deltay,y0-y_max,[t0,t1])==False:
-            return                  
-        if cansee(deltay,y_min-y0,[t0,t1])==False:
+        flag,t0,t1=cansee(deltay,y_max-y0,[t0,t1])#坐标变换
+        if flag==False:
+            return      
+        flag,t0,t1=cansee(-deltay,y0-y_min,[t0,t1])            
+        if flag==False:
             return
         x1=x0+t1*deltax
         y1=y0+t1*deltay

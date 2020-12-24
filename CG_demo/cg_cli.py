@@ -38,20 +38,24 @@ if __name__ == '__main__':
                 for item_type, p_list, algorithm, color in item_dict.values():
                     if item_type == 'line':
                         pixels = alg.draw_line(p_list, algorithm)
-                        for x, y in pixels:
-                            canvas[y, x] = color
+                        if pixels is not None:
+                            for x, y in pixels:
+                                canvas[y, x] = color
                     elif item_type == 'polygon':
                         pixels = alg.draw_polygon(p_list, algorithm)
-                        for x, y in pixels:
-                            canvas[y, x] = color
+                        if pixels is not None:
+                            for x, y in pixels:
+                                canvas[y, x] = color
                     elif item_type == 'ellipse':
                         pixels = alg.draw_ellipse(p_list)
-                        for x, y in pixels:
-                            canvas[y, x] = color
+                        if pixels is not None:
+                            for x, y in pixels:
+                                canvas[y, x] = color
                     elif item_type == 'curve':
                         pixels = alg.draw_curve(p_list, algorithm)
-                        for x, y in pixels:
-                            canvas[y, x] = color
+                        if pixels is not None:
+                            for x, y in pixels:
+                                canvas[y, x] = color
                     else:
                         item_type = item_type.strip().split(' ')
                         if item_type[0] == 'translate':
@@ -60,8 +64,9 @@ if __name__ == '__main__':
                             dx=int(item_type[1])
                             dy=int(item_type[2])
                             newpixels=alg.translate(p_list, dx, dy,algorithm,item_type[len(item_type)-1])
-                            for x, y in newpixels:
-                                canvas[y, x] = color 
+                            if newpixels is not None:
+                                for x, y in newpixels:
+                                    canvas[y, x] = color 
                         elif item_type[0] == 'rotate':
                             pixels=[]
                             newpixels=[]
@@ -69,8 +74,9 @@ if __name__ == '__main__':
                             y=int(item_type[2])
                             r=int(item_type[3])
                             newpixels=alg.rotate(p_list, x, y, r,algorithm,item_type[len(item_type)-1])
-                            for x, y in newpixels:
-                                canvas[y, x] = color  
+                            if newpixels is not None:
+                                for x, y in newpixels:
+                                    canvas[y, x] = color  
                         elif item_type[0] == 'scale':
                             parl=[]
                             newpixels=[]
@@ -78,8 +84,9 @@ if __name__ == '__main__':
                             y=int(item_type[2])
                             r=float(item_type[3])
                             newpixels=alg.scale(p_list, x, y, r,algorithm,item_type[len(item_type)-1])
-                            for x, y in newpixels:
-                                canvas[y, x] = color                                                               
+                            if newpixels is not None:
+                                for x, y in newpixels:
+                                    canvas[y, x] = color                                                               
                         elif item_type[0] == 'clip':
                             pixels=[]
                             newpixels=[]
@@ -89,8 +96,9 @@ if __name__ == '__main__':
                             yM=int(item_type[4])                            
                             clipalg=item_type[5]
                             newpixels=alg.clip(p_list, xm, ym, xM, yM, clipalg,algorithm)
-                            for x, y in newpixels:
-                                canvas[y, x] = color                                                               
+                            if newpixels is not None:
+                                for x, y in newpixels:
+                                    canvas[y, x] = color                                                               
 
 
                 Image.fromarray(canvas).save(os.path.join(output_dir, save_name + '.bmp'), 'bmp')
