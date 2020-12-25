@@ -166,10 +166,35 @@ TODO
     :param algorithm: (string) 绘制使用的算法，包括'Bezier'和'B-spline'（三次均匀B样条曲线，曲线不必经过首末控制点）
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 绘制结果的像素点坐标列表
     """
+    res=[]
     if algorithm == 'Bezier':
-        pass
+        n=len(p_list)-1 # 阶数
+        step=0.0001 # 控制点间的插补点个数
+        #res.append(p_list[0],p_list[n])
+        '''
+        pis =[]                          # 插补点
+        for u in np.arange(0,1+1/self.num,1/self.num):
+            Att=self.Points
+            for i in np.arange(0,self.order):
+                for j in np.arange(0,self.order-i):
+                    Att[j]=(1.0-u)*Att[j]+u*Att[j+1]
+            pis.append(Att[0].tolist())
+
+        return np.array(pis)
+        '''
+
+        u=0.0
+        while u <1.0+step:
+        #for u in range(0.0,1.001,0.001):
+            for i in range(0,n):
+                for j in range(0,n-i):                    
+                    p_list[j][0]=(1.0-u)*p_list[j][0]+u*p_list[j+1][0]
+                    p_list[j][1]=(1.0-u)*p_list[j][1]+u*p_list[j+1][1]
+            res.append([int(p_list[0][0]),int(p_list[0][1])])
+            u+=step
     elif algorithm == 'B-spline':
         pass
+    return res
 
 
 def translate(p_list, dx, dy,alg,itemtype):

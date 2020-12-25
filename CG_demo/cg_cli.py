@@ -132,7 +132,14 @@ if __name__ == '__main__':
                 algorithm = 'midpoint'
                 item_dict[item_id] = ['ellipse', [[x0, y0], [x1, y1]], algorithm, np.array(pen_color)]
             elif line[0] == 'drawCurve':
-                pass
+                item_id = line[1]
+                plist=[]
+                for i in range(2,len(line)-1,2):
+                    x=int(line[i])
+                    y=int(line[i+1])
+                    plist.append([x,y])
+                algorithm = line[len(line)-1]
+                item_dict[item_id] = ['curve', plist, algorithm, np.array(pen_color)]
             elif line[0] == 'translate':
                 item_id = line[1]+' translate' 
                 old = item_dict[line[1]]                       
