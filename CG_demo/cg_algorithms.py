@@ -4,7 +4,6 @@
 # 本文件只允许依赖math库
 import math
 
-
 def draw_line(p_list, algorithm):
     """绘制线段
 
@@ -158,6 +157,49 @@ def draw_ellipse(p_list):
         point[1] = int(point[1]+yc)
     return result
 
+def countMat(A,B):
+    '''
+                U = [pow(u_t-j, 3), pow(u_t-j, 2), u_t-j, 1]]
+            A = [[-1, 3, -3, 1],
+                          [3, -6, 3, 0],
+                          [-3, 0, 3, 0],
+                          [1, 4, 1, 0]]]
+                          '''
+    raw1=1
+    raw2=1
+    col1=len(A)
+    col2=len(B)
+    if isinstance(A[0],list):
+        raw1=len(A)
+        col1=len(A[0])
+    if isinstance(B[0],list):
+        raw2=len(B)
+        col2=(len(B[0]))
+    res=[]
+    # TODO
+    if isinstance(A[0],list):
+        for j in range(col2):
+            res[j].append(0)
+    else:
+        for j in range(col2):
+            res[j]=0
+    if isinstance(B[0],list):
+        for j in range(col2):
+            res[j].append(0)
+    else:
+        for j in range(col2):
+            res[j]=0
+    if raw1 >1:
+        for i in range(raw1):
+            for j in range(col2):
+                for k in range(col1):
+                    res[i][j]+=A[i][k]*B[k][j]
+    else:
+        for i in range(raw1):
+            for j in range(col2):
+                for k in range(col1):
+                    res[i]+=A[i][k]*B[k]
+    return res
 
 def draw_curve(p_list, algorithm):
     """TODO:绘制曲线
@@ -166,6 +208,7 @@ TODO
     :param algorithm: (string) 绘制使用的算法，包括'Bezier'和'B-spline'（三次均匀B样条曲线，曲线不必经过首末控制点）
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 绘制结果的像素点坐标列表
     """
+    
     res=[]
     if algorithm == 'Bezier':
         n=len(p_list)-1 # 阶数
@@ -180,88 +223,24 @@ TODO
             u+=step
             
     elif algorithm == 'B-spline':
-        k=4
-        if k >=len(p_list):
-            k =len(p_list)
-        
-        def p_matrix(u):
-            p=[]
-            for i in range (k):
-                for j in range(k):
-                    p.append([0.0,0.0])
-            tmp=p[0][0][0]
-            for i in range(0,len(p_list)):
-                for r in range(0,k):
-                    if r==0:
-                        p[i][0]=p_list[i]
-                    else:
-                        p[i][r][0]=((u-i)/(k-r))*p[i][r-1][0]+(1-(u-i)/(k-r))*p[i-1][r-1][0]
-                        p[i][r][1]=((u-i)/(k-r))*p[i][r-1][1]+(1-(u-i)/(k-r))*p[i-1][r-1][1]
 
-            return p
-        u_t=k-1
-        last_point=p_list[0]
-        while u_t <= len(p_list):
-            p=p_matrix(u_t)
-            j=int(u_t)
-            point = p[j][k-1]
-            res.append(int(point))
-            last_point=point
-            u_t+=0.1
-        return res
+        k = 4
+        u_t = k-1
+        while (u_t < len(p_list)):
+            j = int(u_t)
+            U = [pow(u_t-j, 3), pow(u_t-j, 2), u_t-j, 1]
+            A = [[-1, 3, -3, 1],
+                          [3, -6, 3, 0],
+                          [-3, 0, 3, 0],
+                          [1, 4, 1, 0]]
+            px = [[p_list[j-k+1][0]], [p_list[j-k+2][0]], [p_list[j-k+3][0]],
+                           [p_list[j-k+4][0]]]
+            py = [[p_list[j-k+1][1]], [p_list[j-k+2][1]], [p_list[j-k+3][1]],
+                           [p_list[j-k+4][1]]]
 
-        '''
-        k=3 # 阶数 三次
-        n=len(p_list)-1 #控制点个数-1
-        step=0.0001 # 参数步长
-        u=0.0
-        knots=[0]
-        x=0
-        ks=1/(n+k+1)
-        while x <1.0+ks:#均匀,顺序节点表
-            knots.append(x)
-            x+=ks
-        res=[]
-        resx=[]
-        resy=[]
-        def de_Boor_x(r,t,i):
-            if r == 0:
-                return p_list[i][0]
-            else:
-                if knots[i+k-r]-knots[i] == 0 and knots[i+k-r]-knots[i] != 0:
-                    return ((knots[i+k-r]-t)/(knots[i+k-r]-knots[i]))*de_Boor_x(r-1,t,i-1)
-                elif knots[i+k-r]-knots[i] != 0 and knots[i+k-r]-knots[i] == 0:
-                    return ((t-knots[i])/(knots[i+k-r]-knots[i]))*de_Boor_x(r-1,t,i)
-                elif knots[i+k-r]-knots[i] == 0 and knots[i+k-r]-knots[i] == 0:
-                    return 0
-                return ((t-knots[i])/(knots[i+k-r]-knots[i]))*de_Boor_x(r-1,t,i)+((knots[i+k-r]-t)/(knots[i+k-r]-knots[i]))*de_Boor_x(r-1,t,i-1)
-        def de_Boor_y(r,t,i):
-            if r == 0:
-                return p_list[i][1]
-            else:
-                if knots[i+k-r]-knots[i] == 0 and knots[i+k-r]-knots[i] != 0:
-                    return ((knots[i+k-r]-t)/(knots[i+k-r]-knots[i]))*de_Boor_y(r-1,t,i-1)
-                elif knots[i+k-r]-knots[i] != 0 and knots[i+k-r]-knots[i] == 0:
-                    return ((t-knots[i])/(knots[i+k-r]-knots[i]))*de_Boor_y(r-1,t,i)
-                elif knots[i+k-r]-knots[i] == 0 and knots[i+k-r]-knots[i] == 0:
-                    return 0
-                return ((t-knots[i])/(knots[i+k-r]-knots[i]))*de_Boor_y(r-1,t,i)+((knots[i+k-r]-t)/(knots[i+k-r]-knots[i]))*de_Boor_y(r-1,t,i-1)
-
-        def plot(x,y):
-            for j in range(k-1,n+1):
-                t=knots[j]
-                ts=(knots[j+1]-knots[j])/50.0
-                while t<knots[j+1]:
-                    x.append(de_Boor_x(k-1,t,j))
-                    y.append(de_Boor_y(k-1,t,j))
-                    t+=ts
-            return x,y
-        if n >= k-1:
-            resx,resy=plot(resx,resy)
-            for i in range(0,len(resx)):
-                res.append([int(resx[i]),int(resy[i])])
-        return res
-        '''
+            point = [int(countMat(countMat(U, A), px)/6), int(countMat(countMat(U, A), py)/6)]
+            res.append(point)
+            u_t += 0.001
     return res
 
 
