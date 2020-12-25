@@ -169,31 +169,99 @@ TODO
     res=[]
     if algorithm == 'Bezier':
         n=len(p_list)-1 # 阶数
-        step=0.0001 # 控制点间的插补点个数
-        #res.append(p_list[0],p_list[n])
-        '''
-        pis =[]                          # 插补点
-        for u in np.arange(0,1+1/self.num,1/self.num):
-            Att=self.Points
-            for i in np.arange(0,self.order):
-                for j in np.arange(0,self.order-i):
-                    Att[j]=(1.0-u)*Att[j]+u*Att[j+1]
-            pis.append(Att[0].tolist())
-
-        return np.array(pis)
-        '''
-
+        step=0.0001 # 参数步长
         u=0.0
         while u <1.0+step:
-        #for u in range(0.0,1.001,0.001):
             for i in range(0,n):
                 for j in range(0,n-i):                    
                     p_list[j][0]=(1.0-u)*p_list[j][0]+u*p_list[j+1][0]
                     p_list[j][1]=(1.0-u)*p_list[j][1]+u*p_list[j+1][1]
             res.append([int(p_list[0][0]),int(p_list[0][1])])
             u+=step
+            
     elif algorithm == 'B-spline':
-        pass
+        k=4
+        if k >=len(p_list):
+            k =len(p_list)
+        
+        def p_matrix(u):
+            p=[]
+            for i in range (k):
+                for j in range(k):
+                    p.append([0.0,0.0])
+            tmp=p[0][0][0]
+            for i in range(0,len(p_list)):
+                for r in range(0,k):
+                    if r==0:
+                        p[i][0]=p_list[i]
+                    else:
+                        p[i][r][0]=((u-i)/(k-r))*p[i][r-1][0]+(1-(u-i)/(k-r))*p[i-1][r-1][0]
+                        p[i][r][1]=((u-i)/(k-r))*p[i][r-1][1]+(1-(u-i)/(k-r))*p[i-1][r-1][1]
+
+            return p
+        u_t=k-1
+        last_point=p_list[0]
+        while u_t <= len(p_list):
+            p=p_matrix(u_t)
+            j=int(u_t)
+            point = p[j][k-1]
+            res.append(int(point))
+            last_point=point
+            u_t+=0.1
+        return res
+
+        '''
+        k=3 # 阶数 三次
+        n=len(p_list)-1 #控制点个数-1
+        step=0.0001 # 参数步长
+        u=0.0
+        knots=[0]
+        x=0
+        ks=1/(n+k+1)
+        while x <1.0+ks:#均匀,顺序节点表
+            knots.append(x)
+            x+=ks
+        res=[]
+        resx=[]
+        resy=[]
+        def de_Boor_x(r,t,i):
+            if r == 0:
+                return p_list[i][0]
+            else:
+                if knots[i+k-r]-knots[i] == 0 and knots[i+k-r]-knots[i] != 0:
+                    return ((knots[i+k-r]-t)/(knots[i+k-r]-knots[i]))*de_Boor_x(r-1,t,i-1)
+                elif knots[i+k-r]-knots[i] != 0 and knots[i+k-r]-knots[i] == 0:
+                    return ((t-knots[i])/(knots[i+k-r]-knots[i]))*de_Boor_x(r-1,t,i)
+                elif knots[i+k-r]-knots[i] == 0 and knots[i+k-r]-knots[i] == 0:
+                    return 0
+                return ((t-knots[i])/(knots[i+k-r]-knots[i]))*de_Boor_x(r-1,t,i)+((knots[i+k-r]-t)/(knots[i+k-r]-knots[i]))*de_Boor_x(r-1,t,i-1)
+        def de_Boor_y(r,t,i):
+            if r == 0:
+                return p_list[i][1]
+            else:
+                if knots[i+k-r]-knots[i] == 0 and knots[i+k-r]-knots[i] != 0:
+                    return ((knots[i+k-r]-t)/(knots[i+k-r]-knots[i]))*de_Boor_y(r-1,t,i-1)
+                elif knots[i+k-r]-knots[i] != 0 and knots[i+k-r]-knots[i] == 0:
+                    return ((t-knots[i])/(knots[i+k-r]-knots[i]))*de_Boor_y(r-1,t,i)
+                elif knots[i+k-r]-knots[i] == 0 and knots[i+k-r]-knots[i] == 0:
+                    return 0
+                return ((t-knots[i])/(knots[i+k-r]-knots[i]))*de_Boor_y(r-1,t,i)+((knots[i+k-r]-t)/(knots[i+k-r]-knots[i]))*de_Boor_y(r-1,t,i-1)
+
+        def plot(x,y):
+            for j in range(k-1,n+1):
+                t=knots[j]
+                ts=(knots[j+1]-knots[j])/50.0
+                while t<knots[j+1]:
+                    x.append(de_Boor_x(k-1,t,j))
+                    y.append(de_Boor_y(k-1,t,j))
+                    t+=ts
+            return x,y
+        if n >= k-1:
+            resx,resy=plot(resx,resy)
+            for i in range(0,len(resx)):
+                res.append([int(resx[i]),int(resy[i])])
+        return res
+        '''
     return res
 
 
