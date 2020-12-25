@@ -158,48 +158,23 @@ def draw_ellipse(p_list):
     return result
 
 def countMat(A,B):
-    '''
-                U = [pow(u_t-j, 3), pow(u_t-j, 2), u_t-j, 1]]
-            A = [[-1, 3, -3, 1],
-                          [3, -6, 3, 0],
-                          [-3, 0, 3, 0],
-                          [1, 4, 1, 0]]]
-                          '''
-    raw1=1
-    raw2=1
-    col1=len(A)
-    col2=len(B)
-    if isinstance(A[0],list):
-        raw1=len(A)
-        col1=len(A[0])
-    if isinstance(B[0],list):
-        raw2=len(B)
-        col2=(len(B[0]))
-    res=[]
-    # TODO
-    if isinstance(A[0],list):
-        for j in range(col2):
-            res[j].append(0)
-    else:
-        for j in range(col2):
-            res[j]=0
-    if isinstance(B[0],list):
-        for j in range(col2):
-            res[j].append(0)
-    else:
-        for j in range(col2):
-            res[j]=0
-    if raw1 >1:
-        for i in range(raw1):
-            for j in range(col2):
-                for k in range(col1):
-                    res[i][j]+=A[i][k]*B[k][j]
-    else:
-        for i in range(raw1):
-            for j in range(col2):
-                for k in range(col1):
-                    res[i]+=A[i][k]*B[k]
-    return res
+    if isinstance(A[0],list)==False:
+        res = []
+        for i in range(len(B[0])):
+            res.append(0)
+        for j in range(len(B[0])):
+            for k in range(len(B)):
+                res[j] += A[k] * B[k][j]
+        return res
+
+    elif len(A[0]) == len(B):
+        res = [[0] * len(B[0]) for i in range(len(A))]
+        for i in range(len(A)):
+            for j in range(len(B[0])):
+                for k in range(len(B)):
+                    res[i][j] += A[i][k] * B[k][j]
+        return res
+    return ('WRONG INPUT！')
 
 def draw_curve(p_list, algorithm):
     """TODO:绘制曲线
@@ -238,7 +213,7 @@ TODO
             py = [[p_list[j-k+1][1]], [p_list[j-k+2][1]], [p_list[j-k+3][1]],
                            [p_list[j-k+4][1]]]
 
-            point = [int(countMat(countMat(U, A), px)/6), int(countMat(countMat(U, A), py)/6)]
+            point = [int(countMat(countMat(U, A), px)[0]/6), int(countMat(countMat(U, A), py)[0]/6)]
             res.append(point)
             u_t += 0.001
     return res
