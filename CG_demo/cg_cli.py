@@ -9,8 +9,11 @@ from PIL import Image
 
 
 if __name__ == '__main__':
-    input_file = 'C:\\Users\yyf01\Desktop\cg2020\CG_demo\input.txt' # sys.argv[1]
-    output_dir = 'C:\\Users\yyf01\Desktop\cg2020\CG_demo\output' # sys.argv[2]
+    current_path = os.path.dirname(__file__)
+    input_file = '\input.txt' # sys.argv[1]
+    input_file = current_path+input_file
+    output_dir = '\output' # sys.argv[2]
+    output_dir=current_path+output_dir
     os.makedirs(output_dir, exist_ok=True)
 
     item_dict = {}# 图元存放 字典结构，value为item_type, p_list, algorithm, color，key为item_id
